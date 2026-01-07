@@ -1,74 +1,52 @@
-<div class="max-w-7xl mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-center text-amber-800 mb-2">Sightings Map</h1>
-  <hr class="border-amber-300 mb-6">
-
-  <!-- Mode Toggle Buttons -->
-  <div class="flex justify-center gap-4 mb-6">
-    <button data-action="click->map#switchMode"
-            data-mode="heatmap"
-            class="px-6 py-2 rounded-lg font-medium transition-all <%= @render_mode == 'heatmap' ? 'bg-amber-500 text-white' : 'bg-white text-amber-800 border border-amber-300 hover:bg-amber-100' %>">
-      Heatmap
-    </button>
-    <button data-action="click->map#switchMode"
-            data-mode="clustered"
-            class="px-6 py-2 rounded-lg font-medium transition-all <%= @render_mode == 'clustered' ? 'bg-amber-500 text-white' : 'bg-white text-amber-800 border border-amber-300 hover:bg-amber-100' %>">
-      Clustered
-    </button>
-    <button data-action="click->map#switchMode"
-            data-mode="markers"
-            class="px-6 py-2 rounded-lg font-medium transition-all <%= @render_mode == 'markers' ? 'bg-amber-500 text-white' : 'bg-white text-amber-800 border border-amber-300 hover:bg-amber-100' %>">
-      Markers
-    </button>
+<div class="flex flex-col h-[calc(100vh-140px)]">
+  <!-- Header -->
+  <div class="px-4 py-4 bg-white border-b border-amber-100">
+    <h1 class="text-xl md:text-2xl font-bold text-center text-amber-800">Sightings Map</h1>
+    <p class="text-sm text-gray-500 text-center mt-1">
+      <%= number_with_delimiter(Sighting.count) %> wildlife observations
+    </p>
   </div>
 
-  <!-- Map Container -->
+  <!-- Map Container - Full width -->
   <div data-controller="map"
        data-map-data-url-value="<%= map_data_sightings_path(format: :json) %>"
-       data-map-mode-value="<%= @render_mode %>"
-       class="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100">
+       data-map-mode-value="markers"
+       class="flex-1 relative">
 
-    <div data-map-target="container"
-         style="height: 520px; width: 100%;">
-    </div>
-  </div>
+    <div data-map-target="container" class="absolute inset-0"></div>
 
-  <!-- Legend -->
-  <div class="mt-6 bg-white rounded-lg shadow p-4 border border-amber-100">
-    <h3 class="font-semibold text-amber-800 mb-3">Legend</h3>
-    <div class="flex flex-wrap gap-4">
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #ff7f00;"></span>
-        <span class="text-sm">Lion</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #377eb8;"></span>
-        <span class="text-sm">Elephant</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #4daf4a;"></span>
-        <span class="text-sm">Giraffe</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #f781bf;"></span>
-        <span class="text-sm">Zebra</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #e41a1c;"></span>
-        <span class="text-sm">Cheetah</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #984ea3;"></span>
-        <span class="text-sm">Hippopotamus</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="w-4 h-4 rounded-full" style="background-color: #a65628;"></span>
-        <span class="text-sm">Warthog</span>
+    <!-- Floating Legend -->
+    <div class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto bg-white/95 backdrop-blur rounded-xl shadow-lg p-3 border border-amber-100 z-[1000]">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center md:justify-start">
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #ff7f00;"></span>
+          <span class="text-xs">Lion</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #377eb8;"></span>
+          <span class="text-xs">Elephant</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #4daf4a;"></span>
+          <span class="text-xs">Giraffe</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #f781bf;"></span>
+          <span class="text-xs">Zebra</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #e41a1c;"></span>
+          <span class="text-xs">Cheetah</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #984ea3;"></span>
+          <span class="text-xs">Hippo</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full" style="background-color: #a65628;"></span>
+          <span class="text-xs">Warthog</span>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="mt-4 text-center text-sm text-gray-500">
-    Showing up to 5,000 sightings from <%= number_with_delimiter(Sighting.count) %> total records
   </div>
 </div>

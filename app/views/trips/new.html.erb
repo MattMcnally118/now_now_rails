@@ -1,114 +1,104 @@
-<div class="max-w-4xl mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-center text-amber-800 mb-2">Trip Planner</h1>
-  <hr class="border-amber-300 mb-6">
-
-  <p class="text-gray-600 text-center mb-8">
-    Plan your wildlife viewing trip. Enter a location and we'll find the best spots nearby.
+<div class="max-w-lg mx-auto px-4 py-6">
+  <h1 class="text-2xl md:text-3xl font-bold text-center text-amber-800 mb-2">Trip Planner</h1>
+  <p class="text-gray-600 text-center mb-6 text-sm">
+    Find the best spots to see wildlife
   </p>
 
-  <div class="bg-white rounded-xl shadow-lg p-6 border border-amber-100">
+  <div class="bg-white rounded-2xl shadow-lg p-6 border border-amber-100">
     <%= form_with model: @trip, local: true, class: "space-y-6" do |f| %>
       <% if @trip.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-          <h3 class="font-semibold">Please fix the following errors:</h3>
-          <ul class="list-disc list-inside mt-2">
-            <% @trip.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+          <% @trip.errors.full_messages.each do |msg| %>
+            <p><%= msg %></p>
+          <% end %>
         </div>
       <% end %>
 
       <% if flash[:alert] %>
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-yellow-700 text-sm">
           <%= flash[:alert] %>
         </div>
       <% end %>
 
-      <!-- Animal Selection -->
+      <!-- Animal Selection with Photos -->
       <div>
-        <label class="block text-sm font-semibold text-amber-800 mb-2">Select Animal</label>
-        <div class="grid grid-cols-3 md:grid-cols-7 gap-3">
+        <label class="block text-sm font-semibold text-amber-800 mb-3">Select Animal</label>
+        <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
           <% @animals.each do |animal| %>
             <label class="cursor-pointer">
               <input type="radio" name="trip[animal_id]" value="<%= animal.id %>"
                      class="peer hidden"
                      <%= 'checked' if @trip.animal_id == animal.id || (@trip.animal_id.nil? && animal == @animals.first) %>>
-              <div class="flex flex-col items-center p-3 rounded-lg border-2 border-gray-200 transition-all peer-checked:border-amber-500 peer-checked:bg-amber-50 hover:border-amber-300">
-                <%= image_tag "#{animal.slug}-icon.png", alt: animal.name, class: "w-10 h-10 mb-1" %>
-                <span class="text-xs font-medium text-gray-700"><%= animal.name %></span>
+              <div class="relative overflow-hidden rounded-lg transition-all peer-checked:ring-2 peer-checked:ring-amber-500 peer-checked:ring-offset-2 hover:opacity-80">
+                <%= image_tag "animals/#{animal.slug}.jpg", alt: animal.name, class: "w-full aspect-square object-cover" %>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-1">
+                  <span class="text-white text-xs font-medium"><%= animal.name.split.first %></span>
+                </div>
               </div>
             </label>
           <% end %>
         </div>
       </div>
 
-      <!-- Location Input -->
-      <div>
-        <label for="place_query" class="block text-sm font-semibold text-amber-800 mb-2">
-          Starting Location
-        </label>
-        <input type="text" name="place_query" id="place_query"
-               placeholder="e.g., Kruger National Park, South Africa"
-               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
-               value="<%= params[:place_query] %>">
-        <p class="text-xs text-gray-500 mt-1">Or enter coordinates below</p>
-      </div>
-
-      <!-- Coordinates (hidden by default) -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Latitude</label>
-          <%= f.number_field :start_latitude, step: 0.0000001, placeholder: "-25.5",
-              class: "w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
+      <!-- Location Input with Autocomplete -->
+      <div data-controller="autocomplete" data-action="click@window->autocomplete#clickOutside">
+        <label class="block text-sm font-semibold text-amber-800 mb-2">Location</label>
+        <div class="relative">
+          <input type="text" name="place_query" id="place_query"
+                 placeholder="Search for a location..."
+                 autocomplete="off"
+                 data-autocomplete-target="input"
+                 data-action="input->autocomplete#search"
+                 class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
+                 value="<%= params[:place_query] %>">
+          <!-- Autocomplete Results -->
+          <div data-autocomplete-target="results"
+               class="hidden absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-auto">
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Longitude</label>
-          <%= f.number_field :start_longitude, step: 0.0000001, placeholder: "28.5",
-              class: "w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
-        </div>
+        <!-- Hidden coordinate fields -->
+        <%= f.hidden_field :start_latitude, data: { autocomplete_target: "latitude" } %>
+        <%= f.hidden_field :start_longitude, data: { autocomplete_target: "longitude" } %>
       </div>
 
       <!-- Search Radius -->
       <div>
-        <label class="block text-sm font-semibold text-amber-800 mb-2">Search Radius (km)</label>
-        <div class="flex gap-3">
-          <% [25, 50, 100, 150, 200].each do |radius| %>
+        <label class="block text-sm font-semibold text-amber-800 mb-2">Search Radius</label>
+        <div class="flex gap-2">
+          <% [25, 50, 100, 150].each do |radius| %>
             <label class="cursor-pointer flex-1">
               <input type="radio" name="trip[radius_km]" value="<%= radius %>"
                      class="peer hidden"
                      <%= 'checked' if @trip.radius_km == radius || (@trip.radius_km.nil? && radius == 50) %>>
               <div class="text-center py-2 rounded-lg border-2 border-gray-200 transition-all peer-checked:border-amber-500 peer-checked:bg-amber-50 hover:border-amber-300">
-                <span class="font-medium"><%= radius %></span>
+                <span class="text-sm font-medium"><%= radius %>km</span>
               </div>
             </label>
           <% end %>
         </div>
       </div>
 
-      <!-- Target Time (Optional) -->
-      <div class="grid grid-cols-2 gap-4">
+      <!-- Target Time (Optional) - Compact -->
+      <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm font-semibold text-amber-800 mb-2">Target Month (optional)</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Month (optional)</label>
           <%= f.select :target_month,
-              options_for_select([['Any month', nil]] + (1..12).map { |m| [Date::MONTHNAMES[m], m] }, @trip.target_month),
+              options_for_select([['Any', nil]] + (1..12).map { |m| [Date::ABBR_MONTHNAMES[m], m] }, @trip.target_month),
               {},
-              class: "w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
+              class: "w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
         </div>
         <div>
-          <label class="block text-sm font-semibold text-amber-800 mb-2">Target Hour (optional)</label>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Hour (optional)</label>
           <%= f.select :target_hour,
-              options_for_select([['Any time', nil]] + (0..23).map { |h| [format('%02d:00', h), h] }, @trip.target_hour),
+              options_for_select([['Any', nil]] + (0..23).map { |h| [format('%02d:00', h), h] }, @trip.target_hour),
               {},
-              class: "w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
+              class: "w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
         </div>
       </div>
 
       <!-- Submit -->
-      <div class="pt-4">
-        <%= f.submit "Find Best Locations",
-            class: "w-full py-3 px-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg shadow-md transition-all cursor-pointer" %>
-      </div>
+      <%= f.submit "Find Best Locations",
+          class: "w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md transition-all cursor-pointer" %>
     <% end %>
   </div>
 </div>

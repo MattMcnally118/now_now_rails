@@ -79,38 +79,59 @@ class TripsController < ApplicationController
       trip.recommended_longitude = nearby_sightings.map(&:longitude).sum / nearby_sightings.size
     end
 
-    # Calculate temporal score
-    temporal_score = 0.0
-    if trip.target_month.present?
-      month_matches = nearby_sightings.count { |s| s.month == trip.target_month }
-      temporal_score += month_matches.to_f / nearby_sightings.size * 0.5
+    # Get ML predictions for activity
+    predictions = MlService.predict_activity(animal)
+    grid = predictions[:grid] || []
+
+    # Find max activity and best time from predictions
+    max_activity = grid.map { |g| g[:predicted_activity] }.max || 1.0
+    best_month = predictions[:best_month] || 6
+    best_hour = predictions[:best_hour] || 7
+
+    # Use user's target time or recommend the best
+    target_month = trip.target_month.present? ? trip.target_month : best_month
+    target_hour = trip.target_hour.present? ? trip.target_hour : best_hour
+
+    # Store recommended time if user didn't specify
+    trip.target_month ||= best_month
+    trip.target_hour ||= best_hour
+
+    # Find predicted activity for target time
+    target_prediction = grid.find { |g| g[:month] == target_month && g[:hour] == target_hour }
+    target_activity = target_prediction ? target_prediction[:predicted_activity] : (max_activity * 0.5)
+
+    # Calculate ML-based likelihood score (percentage of optimal)
+    ml_score = (target_activity / max_activity * 100).round
+
+    # Apply confidence modifier based on sighting density
+    sighting_count = nearby_sightings.size
+    confidence_cap = if sighting_count < 50
+      60  # Low confidence
+    elsif sighting_count < 200
+      85  # Medium confidence
+    else
+      100 # High confidence
     end
-    if trip.target_hour.present?
-      hour_matches = nearby_sightings.count { |s| s.hour == trip.target_hour }
-      temporal_score += hour_matches.to_f / nearby_sightings.size * 0.5
-    end
-    temporal_score = 0.5 if trip.target_month.blank? && trip.target_hour.blank?
 
-    # Calculate spatial score based on density
-    spatial_score = [nearby_sightings.size.to_f / 100, 1.0].min
+    trip.likelihood_score = [ml_score, confidence_cap].min
 
-    trip.temporal_score = temporal_score
-    trip.spatial_score = spatial_score
-
-    # Combined likelihood (70% temporal, 30% spatial like original app)
-    trip.likelihood_score = ((temporal_score * 0.7 + spatial_score * 0.3) * 100).round
+    # Store component scores for reference
+    trip.temporal_score = ml_score / 100.0
+    trip.spatial_score = [sighting_count.to_f / 200, 1.0].min
 
     # Generate notes
     notes = []
-    notes << "Found #{nearby_sightings.size} #{animal.name} sightings within #{trip.radius_km}km"
+    notes << "Found #{sighting_count} #{animal.name} sightings within #{trip.radius_km}km"
 
-    if hotspot[:cluster_count] > 0
-      notes << "#{hotspot[:cluster_count]} activity clusters detected, largest has #{hotspot[:points_in_largest]} sightings"
+    if trip.target_month.present? && trip.target_hour.present?
+      time_str = "#{Date::MONTHNAMES[trip.target_month]} at #{format('%02d:00', trip.target_hour)}"
+      notes << "Best viewing: #{time_str}"
     end
 
-    if trip.target_month.present?
-      month_sightings = nearby_sightings.count { |s| s.month == trip.target_month }
-      notes << "#{month_sightings} sightings in #{Date::MONTHNAMES[trip.target_month]}"
+    if sighting_count < 50
+      notes << "Limited data - confidence capped at 60%"
+    elsif sighting_count < 200
+      notes << "Moderate data - confidence capped at 85%"
     end
 
     trip.notes = notes

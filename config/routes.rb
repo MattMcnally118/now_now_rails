@@ -15,8 +15,8 @@ Rails.application.routes.draw do
   # Trip Planner feature
   resources :trips, only: [:index, :new, :create, :show]
 
-  # Root path - default to animals
-  root "animals#index"
+  # Landing page
+  root "home#index"
 
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check

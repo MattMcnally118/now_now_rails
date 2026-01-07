@@ -5,77 +5,70 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50 font-[Montserrat]">
-    <div class="flex min-h-screen">
-      <!-- Sidebar Navigation -->
-      <aside class="w-64 bg-gradient-to-b from-amber-50 to-amber-100 border-r border-amber-200 flex flex-col">
-        <!-- Logo & Brand -->
-        <div class="p-6 border-b border-amber-200">
-          <div class="flex items-center gap-3">
-            <%= image_tag "logo-brown.png", alt: "NowNow", class: "w-12 h-12" %>
-            <div>
-              <h1 class="text-xl font-bold text-amber-800">NowNow</h1>
-              <p class="text-xs text-amber-600">Wildlife Finder</p>
-            </div>
+  <body class="bg-[#FFF8F0] font-[Montserrat] min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-amber-100 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 py-3">
+        <%= link_to root_path, class: "flex items-center gap-3 hover:opacity-80 transition-opacity" do %>
+          <%= image_tag "logo-brown.png", alt: "NowNow", class: "w-10 h-10" %>
+          <div>
+            <h1 class="text-lg font-bold text-amber-800 leading-tight">NowNow</h1>
+            <p class="text-xs text-amber-600 leading-tight">Wildlife Finder</p>
           </div>
-          <p class="text-xs text-gray-500 mt-3">
-            Plan sightings, explore maps, and build trips
-          </p>
-        </div>
+        <% end %>
+      </div>
+    </header>
 
-        <!-- Navigation Links -->
-        <nav class="flex-1 p-4 space-y-2">
+    <!-- Main Content -->
+    <main class="flex-1 pb-24">
+      <%= yield %>
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-amber-200 shadow-lg z-50">
+      <nav class="max-w-lg mx-auto px-2">
+        <div class="flex justify-around items-center py-2">
           <%= link_to animals_path,
-              class: "flex items-center gap-3 px-4 py-3 rounded-lg transition-all #{current_page?(animals_path) || current_page?(root_path) ? 'bg-amber-500 text-white shadow-md' : 'text-amber-800 hover:bg-amber-200'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class: "flex flex-col items-center px-3 py-2 rounded-lg transition-all #{current_page?(animals_path) ? 'text-amber-600 bg-amber-50' : 'text-gray-500 hover:text-amber-600'}" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
             </svg>
-            Animal Info
+            <span class="text-xs mt-1 font-medium">Animals</span>
           <% end %>
 
           <%= link_to sightings_path,
-              class: "flex items-center gap-3 px-4 py-3 rounded-lg transition-all #{current_page?(sightings_path) ? 'bg-amber-500 text-white shadow-md' : 'text-amber-800 hover:bg-amber-200'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class: "flex flex-col items-center px-3 py-2 rounded-lg transition-all #{current_page?(sightings_path) ? 'text-amber-600 bg-amber-50' : 'text-gray-500 hover:text-amber-600'}" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
             </svg>
-            Sightings Map
+            <span class="text-xs mt-1 font-medium">Map</span>
           <% end %>
 
           <%= link_to activities_path,
-              class: "flex items-center gap-3 px-4 py-3 rounded-lg transition-all #{controller_name == 'activities' ? 'bg-amber-500 text-white shadow-md' : 'text-amber-800 hover:bg-amber-200'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              class: "flex flex-col items-center px-3 py-2 rounded-lg transition-all #{controller_name == 'activities' ? 'text-amber-600 bg-amber-50' : 'text-gray-500 hover:text-amber-600'}" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
-            Activity
+            <span class="text-xs mt-1 font-medium">Activity</span>
           <% end %>
 
           <%= link_to new_trip_path,
-              class: "flex items-center gap-3 px-4 py-3 rounded-lg transition-all #{controller_name == 'trips' ? 'bg-amber-500 text-white shadow-md' : 'text-amber-800 hover:bg-amber-200'}" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              class: "flex flex-col items-center px-3 py-2 rounded-lg transition-all #{controller_name == 'trips' ? 'text-amber-600 bg-amber-50' : 'text-gray-500 hover:text-amber-600'}" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            Planner
+            <span class="text-xs mt-1 font-medium">Planner</span>
           <% end %>
-        </nav>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-amber-200 text-center">
-          <p class="text-xs text-gray-500">Now Now Wildlife Finder</p>
-          <p class="text-xs text-gray-400">Rails Edition</p>
         </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="flex-1 overflow-auto">
-        <%= yield %>
-      </main>
-    </div>
+      </nav>
+    </footer>
   </body>
 </html>
