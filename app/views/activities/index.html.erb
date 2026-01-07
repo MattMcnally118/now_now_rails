@@ -1,0 +1,24 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-center text-amber-800 mb-2">Activity Analysis</h1>
+  <hr class="border-amber-300 mb-6">
+
+  <p class="text-gray-600 text-center mb-8">
+    Select an animal to analyze when and where it's most active.
+  </p>
+
+  <!-- Animal Selection -->
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+    <% @animals.each do |animal| %>
+      <%= link_to activity_path(animal_slug: animal.slug),
+          class: "flex flex-col items-center p-4 rounded-lg border-2 transition-all hover:shadow-lg #{animal == @selected_animal ? 'border-amber-500 bg-amber-50' : 'border-gray-200 bg-white hover:border-amber-300'}" do %>
+        <%= image_tag "#{animal.slug}-icon.png", alt: animal.name, class: "w-16 h-16 mb-2" %>
+        <span class="text-sm font-medium text-gray-700"><%= animal.name %></span>
+        <span class="text-xs text-gray-500"><%= number_with_delimiter(animal.sightings.count) %> records</span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="text-center text-gray-500">
+    Click an animal above to view activity analysis
+  </div>
+</div>

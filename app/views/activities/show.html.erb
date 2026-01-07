@@ -1,0 +1,116 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-center text-amber-800 mb-2">Activity Analysis</h1>
+  <hr class="border-amber-300 mb-6">
+
+  <!-- Animal Selection -->
+  <div class="flex justify-center gap-2 flex-wrap mb-8">
+    <% @animals.each do |animal| %>
+      <%= link_to activity_path(animal_slug: animal.slug),
+          class: "flex items-center gap-2 px-4 py-2 rounded-full transition-all #{animal == @selected_animal ? 'bg-amber-500 text-white' : 'bg-white text-amber-800 border border-amber-300 hover:bg-amber-100'}" do %>
+        <%= image_tag "#{animal.slug}-icon.png", alt: animal.name, class: "w-6 h-6" %>
+        <span class="text-sm font-medium"><%= animal.name %></span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Selected Animal Header -->
+  <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-amber-100">
+    <div class="flex items-center gap-4">
+      <%= image_tag "animals/#{@selected_animal.slug}.jpg", alt: @selected_animal.name, class: "w-24 h-24 rounded-lg object-cover" %>
+      <div>
+        <h2 class="text-2xl font-bold text-amber-800"><%= @selected_animal.name %></h2>
+        <p class="text-gray-600"><%= number_with_delimiter(@selected_animal.sightings.count) %> sightings analyzed</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Best Times Card -->
+  <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-lg p-6 mb-6 text-white">
+    <h3 class="text-lg font-semibold mb-4">Best Time to See <%= @selected_animal.name %></h3>
+    <div class="grid grid-cols-2 gap-6">
+      <div class="text-center">
+        <p class="text-4xl font-bold"><%= Date::MONTHNAMES[@best_month] %></p>
+        <p class="text-amber-100">Best Month</p>
+      </div>
+      <div class="text-center">
+        <p class="text-4xl font-bold"><%= format("%02d:00", @best_hour) %></p>
+        <p class="text-amber-100">Best Hour</p>
+      </div>
+    </div>
+    <% if @predictions[:error] %>
+      <p class="text-sm text-amber-200 mt-4 text-center">
+        <em>Note: <%= @predictions[:error] %></em>
+      </p>
+    <% end %>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- Hourly Activity Chart -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-amber-100">
+      <h3 class="text-lg font-semibold text-amber-800 mb-4">Hourly Activity Pattern</h3>
+      <div class="space-y-2">
+        <% max_hourly = @hourly_counts.values.max || 1 %>
+        <% (0..23).each do |hour| %>
+          <% count = @hourly_counts[hour] || 0 %>
+          <% percentage = (count.to_f / max_hourly * 100).round %>
+          <div class="flex items-center gap-2">
+            <span class="w-12 text-xs text-gray-500 text-right"><%= format("%02d:00", hour) %></span>
+            <div class="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+              <div class="h-full rounded-full <%= hour == @best_hour ? 'bg-amber-500' : 'bg-amber-300' %>"
+                   style="width: <%= percentage %>%"></div>
+            </div>
+            <span class="w-12 text-xs text-gray-500"><%= count %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Monthly Activity Chart -->
+    <div class="bg-white rounded-xl shadow-lg p-6 border border-amber-100">
+      <h3 class="text-lg font-semibold text-amber-800 mb-4">Monthly Activity Pattern</h3>
+      <div class="space-y-3">
+        <% max_monthly = @monthly_counts.values.max || 1 %>
+        <% (1..12).each do |month| %>
+          <% count = @monthly_counts[month] || 0 %>
+          <% percentage = (count.to_f / max_monthly * 100).round %>
+          <div class="flex items-center gap-2">
+            <span class="w-12 text-xs text-gray-500 text-right"><%= Date::ABBR_MONTHNAMES[month] %></span>
+            <div class="flex-1 bg-gray-100 rounded-full h-5 overflow-hidden">
+              <div class="h-full rounded-full <%= month == @best_month ? 'bg-amber-500' : 'bg-amber-300' %>"
+                   style="width: <%= percentage %>%"></div>
+            </div>
+            <span class="w-16 text-xs text-gray-500"><%= count %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- GMM Activity Curve -->
+  <div class="bg-white rounded-xl shadow-lg p-6 mt-6 border border-amber-100">
+    <h3 class="text-lg font-semibold text-amber-800 mb-4">
+      Activity Probability Curve for <%= Date::MONTHNAMES[@best_month] %>
+    </h3>
+    <p class="text-sm text-gray-500 mb-4">
+      Based on Gaussian Mixture Model analysis of hourly patterns
+    </p>
+    <div class="flex items-end gap-1 h-40">
+      <% max_prob = @gmm_curve[:probabilities].max || 0.1 %>
+      <% @gmm_curve[:hours].each_with_index do |hour, idx| %>
+        <% prob = @gmm_curve[:probabilities][idx] %>
+        <% height = (prob / max_prob * 100).round %>
+        <div class="flex-1 flex flex-col items-center">
+          <div class="w-full bg-amber-400 rounded-t hover:bg-amber-500 transition-colors"
+               style="height: <%= height %>%"
+               title="<%= format('%02d:00', hour) %>: <%= (prob * 100).round(1) %>%">
+          </div>
+          <% if hour % 4 == 0 %>
+            <span class="text-xs text-gray-400 mt-1"><%= format('%02d', hour) %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <p class="text-xs text-gray-400 text-center mt-2">Hour of Day</p>
+  </div>
+</div>

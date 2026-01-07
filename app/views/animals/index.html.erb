@@ -1,0 +1,64 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-center text-amber-800 mb-2">Animal Info</h1>
+  <hr class="border-amber-300 mb-8">
+
+  <p class="text-gray-600 text-center mb-8">
+    Browse wildlife species and learn about their habitat, diet, and behavior patterns.
+  </p>
+
+  <!-- Horizontal scrolling cards container -->
+  <div class="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory">
+    <% @animals.each do |animal| %>
+      <div class="flex-none w-80 snap-start">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-100 hover:shadow-xl transition-shadow">
+          <!-- Animal Image -->
+          <div class="relative h-48 overflow-hidden">
+            <%= image_tag "animals/#{animal.slug}.jpg",
+                alt: animal.name,
+                class: "w-full h-full object-cover" %>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+              <h2 class="text-xl font-bold text-white"><%= animal.name %></h2>
+            </div>
+          </div>
+
+          <!-- Animal Info -->
+          <div class="p-4 space-y-3">
+            <% if animal.animal_info %>
+              <div>
+                <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide">Habitat</h3>
+                <p class="text-sm text-gray-600"><%= animal.animal_info.habitat %></p>
+              </div>
+
+              <div>
+                <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide">Diet</h3>
+                <p class="text-sm text-gray-600"><%= animal.animal_info.diet %></p>
+              </div>
+
+              <div>
+                <h3 class="text-sm font-semibold text-amber-700 uppercase tracking-wide">Behavior</h3>
+                <p class="text-sm text-gray-600"><%= animal.animal_info.behavior_notes %></p>
+              </div>
+            <% end %>
+
+            <!-- Stats -->
+            <div class="flex justify-between pt-3 border-t border-gray-100">
+              <div class="text-center">
+                <p class="text-lg font-bold text-amber-600"><%= number_with_delimiter(animal.record_count) %></p>
+                <p class="text-xs text-gray-500">Records</p>
+              </div>
+              <div class="text-center">
+                <p class="text-lg font-bold text-amber-600"><%= animal.range_span_km %> km</p>
+                <p class="text-xs text-gray-500">Range Span</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Scroll hint -->
+  <p class="text-center text-gray-400 text-sm mt-4">
+    Scroll horizontally to see all animals
+  </p>
+</div>

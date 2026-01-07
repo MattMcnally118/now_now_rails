@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: now_now
+      POSTGRES_PASSWORD: now_now_password
+      POSTGRES_DB: now_now_rails_production
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U now_now -d now_now_rails_production"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Python ML Microservice
+  ml_service:
+    build:
+      context: ./ml_service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Rails Web Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://now_now:now_now_password@db:5432/now_now_rails_production
+      ML_SERVICE_URL: http://ml_service:8000
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      RAILS_SERVE_STATIC_FILES: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+      ml_service:
+        condition: service_healthy
+    volumes:
+      - ./data:/rails/data:ro
+    command: >
+      bash -c "
+        ./bin/rails db:prepare &&
+        ./bin/rails server -b 0.0.0.0
+      "
+
+volumes:
+  postgres_data:
