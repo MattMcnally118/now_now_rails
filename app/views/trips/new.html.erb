@@ -1,13 +1,10 @@
 <div class="max-w-lg mx-auto px-4 py-6">
-  <h1 class="text-2xl md:text-3xl font-bold text-center text-amber-800 mb-2">Trip Planner</h1>
-  <p class="text-gray-600 text-center mb-6 text-sm">
-    Find the best spots to see wildlife
-  </p>
+  <h1 class="text-2xl md:text-3xl font-bold text-center mb-6" style="color: #F5D67A;">Trip Planner</h1>
 
-  <div class="bg-white rounded-2xl shadow-lg p-6 border border-amber-100">
+  <div class="rounded-2xl shadow-lg p-6" style="background-color: #6B5D4D;">
     <%= form_with model: @trip, local: true, class: "space-y-6" do |f| %>
       <% if @trip.errors.any? %>
-        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+        <div class="rounded-lg p-3 text-sm" style="background-color: #8B4513; color: #FFE9A0;">
           <% @trip.errors.full_messages.each do |msg| %>
             <p><%= msg %></p>
           <% end %>
@@ -15,25 +12,26 @@
       <% end %>
 
       <% if flash[:alert] %>
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-yellow-700 text-sm">
+        <div class="rounded-lg p-3 text-sm" style="background-color: #7D6D5D; color: #F5D67A;">
           <%= flash[:alert] %>
         </div>
       <% end %>
 
-      <!-- Animal Selection with Photos -->
+      <!-- Animal Selection - Text Buttons -->
       <div>
-        <label class="block text-sm font-semibold text-amber-800 mb-3">Select Animal</label>
-        <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
+        <style>
+          .select-btn input:checked + div { border-color: #F5D67A !important; color: #F5D67A !important; }
+        </style>
+        <label class="block text-sm font-semibold mb-3" style="color: #F5D67A;">Select Animal</label>
+        <div class="flex flex-wrap gap-2">
           <% @animals.each do |animal| %>
-            <label class="cursor-pointer">
+            <label class="cursor-pointer select-btn">
               <input type="radio" name="trip[animal_id]" value="<%= animal.id %>"
                      class="peer hidden"
                      <%= 'checked' if @trip.animal_id == animal.id || (@trip.animal_id.nil? && animal == @animals.first) %>>
-              <div class="relative overflow-hidden rounded-lg transition-all peer-checked:ring-2 peer-checked:ring-amber-500 peer-checked:ring-offset-2 hover:opacity-80">
-                <%= image_tag "animals/#{animal.slug}.jpg", alt: animal.name, class: "w-full aspect-square object-cover" %>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-1">
-                  <span class="text-white text-xs font-medium"><%= animal.name.split.first %></span>
-                </div>
+              <div class="px-4 py-2 rounded-lg transition-all text-sm font-medium hover:opacity-80"
+                   style="background-color: #5D4E37; color: #D4C4B4; border: 2px solid #5D4E37;">
+                <%= animal.name %>
               </div>
             </label>
           <% end %>
@@ -42,63 +40,69 @@
 
       <!-- Location Input with Autocomplete -->
       <div data-controller="autocomplete" data-action="click@window->autocomplete#clickOutside">
-        <label class="block text-sm font-semibold text-amber-800 mb-2">Location</label>
+        <label class="block text-sm font-semibold mb-2" style="color: #F5D67A;">Location</label>
         <div class="relative">
           <input type="text" name="place_query" id="place_query"
                  placeholder="Search for a location..."
                  autocomplete="off"
                  data-autocomplete-target="input"
                  data-action="input->autocomplete#search"
-                 class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
+                 class="w-full px-4 py-3 rounded-xl transition-all"
+                 style="background-color: #5D4E37; border: 1px solid #7D6D5D; color: #F5D67A;"
                  value="<%= params[:place_query] %>">
-          <!-- Autocomplete Results -->
           <div data-autocomplete-target="results"
-               class="hidden absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-auto">
+               class="hidden absolute z-10 w-full mt-1 rounded-xl shadow-lg max-h-60 overflow-auto"
+               style="background-color: #5D4E37; border: 1px solid #7D6D5D;">
           </div>
         </div>
-        <!-- Hidden coordinate fields -->
+        <!-- Location map preview -->
+        <div data-autocomplete-target="mapContainer" class="hidden mt-3 rounded-xl overflow-hidden" style="height: 150px;">
+          <div data-autocomplete-target="map" style="width: 100%; height: 100%;"></div>
+        </div>
         <%= f.hidden_field :start_latitude, data: { autocomplete_target: "latitude" } %>
         <%= f.hidden_field :start_longitude, data: { autocomplete_target: "longitude" } %>
       </div>
 
       <!-- Search Radius -->
       <div>
-        <label class="block text-sm font-semibold text-amber-800 mb-2">Search Radius</label>
+        <label class="block text-sm font-semibold mb-2" style="color: #F5D67A;">Search Radius</label>
         <div class="flex gap-2">
           <% [25, 50, 100, 150].each do |radius| %>
-            <label class="cursor-pointer flex-1">
+            <label class="cursor-pointer flex-1 select-btn">
               <input type="radio" name="trip[radius_km]" value="<%= radius %>"
                      class="peer hidden"
                      <%= 'checked' if @trip.radius_km == radius || (@trip.radius_km.nil? && radius == 50) %>>
-              <div class="text-center py-2 rounded-lg border-2 border-gray-200 transition-all peer-checked:border-amber-500 peer-checked:bg-amber-50 hover:border-amber-300">
-                <span class="text-sm font-medium"><%= radius %>km</span>
+              <div class="text-center py-2 rounded-lg transition-all text-sm font-medium"
+                   style="background-color: #5D4E37; color: #D4C4B4; border: 2px solid #5D4E37;">
+                <%= radius %>km
               </div>
             </label>
           <% end %>
         </div>
       </div>
 
-      <!-- Target Time (Optional) - Compact -->
+      <!-- Target Time (Optional) -->
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Month (optional)</label>
+          <label class="block text-xs font-medium mb-1" style="color: #D4C4B4;">Month (optional)</label>
           <%= f.select :target_month,
               options_for_select([['Any', nil]] + (1..12).map { |m| [Date::ABBR_MONTHNAMES[m], m] }, @trip.target_month),
               {},
-              class: "w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
+              class: "w-full px-3 py-2 text-sm rounded-lg", style: "background-color: #5D4E37; border: 1px solid #7D6D5D; color: #F5D67A;" %>
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Hour (optional)</label>
+          <label class="block text-xs font-medium mb-1" style="color: #D4C4B4;">Hour (optional)</label>
           <%= f.select :target_hour,
               options_for_select([['Any', nil]] + (0..23).map { |h| [format('%02d:00', h), h] }, @trip.target_hour),
               {},
-              class: "w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200" %>
+              class: "w-full px-3 py-2 text-sm rounded-lg", style: "background-color: #5D4E37; border: 1px solid #7D6D5D; color: #F5D67A;" %>
         </div>
       </div>
 
       <!-- Submit -->
       <%= f.submit "Find Best Locations",
-          class: "w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md transition-all cursor-pointer" %>
+          class: "w-full py-3 font-semibold rounded-xl shadow-md transition-all cursor-pointer",
+          style: "background-color: #F5D67A; color: #3D3225;" %>
     <% end %>
   </div>
 </div>

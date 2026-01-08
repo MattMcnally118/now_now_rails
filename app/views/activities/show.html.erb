@@ -1,47 +1,45 @@
 <div class="max-w-4xl mx-auto px-4 py-6">
-  <h1 class="text-2xl md:text-3xl font-bold text-center text-amber-800 mb-6">Activity Analysis</h1>
+  <h1 class="text-2xl md:text-3xl font-bold text-center mb-4" style="color: #F5D67A;">Activity Analysis</h1>
 
-  <!-- Animal Selection with Photos -->
-  <div class="flex justify-center gap-3 flex-wrap mb-8">
+  <!-- Animal Selection - Logo Icons -->
+  <div class="flex justify-center gap-3 mb-6 flex-wrap">
     <% @animals.each do |animal| %>
       <%= link_to activity_path(animal_slug: animal.slug),
-          class: "group relative overflow-hidden rounded-xl transition-all #{animal == @selected_animal ? 'ring-4 ring-amber-500 ring-offset-2' : 'hover:ring-2 hover:ring-amber-300'}" do %>
-        <%= image_tag "animals/#{animal.slug}.jpg",
+          class: "overflow-hidden rounded-2xl transition-all flex items-center justify-center #{animal == @selected_animal ? '' : 'opacity-50 hover:opacity-100'}",
+          style: "background-color: #5D4E37; width: 48px; height: 48px; border: 2px solid #{animal == @selected_animal ? '#F5D67A' : '#5D4E37'};" do %>
+        <%= image_tag "#{animal.slug}-icon.png",
             alt: animal.name,
-            class: "w-14 h-14 md:w-16 md:h-16 object-cover" %>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-1">
-          <span class="text-white text-xs font-medium"><%= animal.name.split.first %></span>
-        </div>
+            class: "w-8 h-8 object-contain" %>
       <% end %>
     <% end %>
   </div>
 
   <!-- Best Times Card -->
-  <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl shadow-lg p-6 mb-6 text-white">
-    <h3 class="text-sm font-medium text-amber-100 mb-2">Best Time to See <%= @selected_animal.name %></h3>
+  <div class="rounded-2xl shadow-lg p-6 mb-6" style="background-color: #6B5D4D;">
+    <h3 class="text-sm font-medium mb-2" style="color: #E8D5B0;">Best Time to See <%= @selected_animal.name %></h3>
     <div class="grid grid-cols-2 gap-4">
       <div class="text-center">
-        <p class="text-3xl md:text-4xl font-bold"><%= Date::MONTHNAMES[@best_month] %></p>
-        <p class="text-amber-100 text-sm">Best Month</p>
+        <p class="text-3xl md:text-4xl font-bold" style="color: #F5D67A;"><%= Date::MONTHNAMES[@best_month] %></p>
+        <p class="text-sm" style="color: #D4C4B4;">Best Month</p>
       </div>
       <div class="text-center">
-        <p class="text-3xl md:text-4xl font-bold"><%= format("%02d:00", @best_hour) %></p>
-        <p class="text-amber-100 text-sm">Best Hour</p>
+        <p class="text-3xl md:text-4xl font-bold" style="color: #F5D67A;"><%= format("%02d:00", @best_hour) %></p>
+        <p class="text-sm" style="color: #D4C4B4;">Best Hour</p>
       </div>
     </div>
   </div>
 
-  <!-- Charts - Horizontal Line Style -->
+  <!-- Charts -->
   <div class="space-y-6">
     <!-- Hourly Activity Chart -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 border border-amber-100">
-      <h3 class="text-lg font-semibold text-amber-800 mb-4">Hourly Activity</h3>
+    <div class="rounded-2xl shadow-lg p-6" style="background-color: #6B5D4D;">
+      <h3 class="text-lg font-semibold mb-4" style="color: #F5D67A;">Hourly Activity</h3>
       <div class="relative h-32">
         <svg viewBox="0 0 100 40" preserveAspectRatio="none" class="w-full h-full">
           <defs>
             <linearGradient id="hourlyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.4" />
-              <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.05" />
+              <stop offset="0%" style="stop-color:#F5D67A;stop-opacity:0.4" />
+              <stop offset="100%" style="stop-color:#F5D67A;stop-opacity:0.05" />
             </linearGradient>
           </defs>
           <% max_hourly = @hourly_counts.values.max || 1 %>
@@ -52,18 +50,17 @@
               "#{x},#{y}"
             end.join(' ') %>
           <polygon points="0,40 <%= points %> 100,40" fill="url(#hourlyGradient)" />
-          <polyline points="<%= points %>" fill="none" stroke="#f59e0b" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="<%= points %>" fill="none" stroke="#F5D67A" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
           <% (0..23).each do |hour|
               count = @hourly_counts[hour] || 0
               x = (hour.to_f / 23 * 100).round(2)
               y = (40 - (count.to_f / max_hourly * 35)).round(2) %>
             <% if hour == @best_hour %>
-              <circle cx="<%= x %>" cy="<%= y %>" r="1.5" fill="#ea580c" />
+              <circle cx="<%= x %>" cy="<%= y %>" r="1.5" fill="#FFE9A0" />
             <% end %>
           <% end %>
         </svg>
-        <!-- X-axis labels -->
-        <div class="flex justify-between mt-2 text-xs text-gray-400">
+        <div class="flex justify-between mt-2 text-xs" style="color: #A89888;">
           <span>00:00</span>
           <span>06:00</span>
           <span>12:00</span>
@@ -74,14 +71,14 @@
     </div>
 
     <!-- Monthly Activity Chart -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 border border-amber-100">
-      <h3 class="text-lg font-semibold text-amber-800 mb-4">Monthly Activity</h3>
+    <div class="rounded-2xl shadow-lg p-6" style="background-color: #6B5D4D;">
+      <h3 class="text-lg font-semibold mb-4" style="color: #F5D67A;">Monthly Activity</h3>
       <div class="relative h-32">
         <svg viewBox="0 0 100 40" preserveAspectRatio="none" class="w-full h-full">
           <defs>
             <linearGradient id="monthlyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.4" />
-              <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.05" />
+              <stop offset="0%" style="stop-color:#F5D67A;stop-opacity:0.4" />
+              <stop offset="100%" style="stop-color:#F5D67A;stop-opacity:0.05" />
             </linearGradient>
           </defs>
           <% max_monthly = @monthly_counts.values.max || 1 %>
@@ -92,18 +89,17 @@
               "#{x},#{y}"
             end.join(' ') %>
           <polygon points="0,40 <%= points %> 100,40" fill="url(#monthlyGradient)" />
-          <polyline points="<%= points %>" fill="none" stroke="#f59e0b" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="<%= points %>" fill="none" stroke="#F5D67A" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" />
           <% (1..12).each do |month|
               count = @monthly_counts[month] || 0
               x = ((month - 1).to_f / 11 * 100).round(2)
               y = (40 - (count.to_f / max_monthly * 35)).round(2) %>
             <% if month == @best_month %>
-              <circle cx="<%= x %>" cy="<%= y %>" r="1.5" fill="#ea580c" />
+              <circle cx="<%= x %>" cy="<%= y %>" r="1.5" fill="#FFE9A0" />
             <% end %>
           <% end %>
         </svg>
-        <!-- X-axis labels -->
-        <div class="flex justify-between mt-2 text-xs text-gray-400">
+        <div class="flex justify-between mt-2 text-xs" style="color: #A89888;">
           <span>Jan</span>
           <span>Apr</span>
           <span>Jul</span>

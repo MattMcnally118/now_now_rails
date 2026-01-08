@@ -1,50 +1,51 @@
-<div class="flex flex-col h-[calc(100vh-140px)]">
+<div class="flex flex-col" style="height: calc(100vh - 130px);">
   <!-- Header -->
-  <div class="px-4 py-4 bg-white border-b border-amber-100">
-    <h1 class="text-xl md:text-2xl font-bold text-center text-amber-800">Sightings Map</h1>
-    <p class="text-sm text-gray-500 text-center mt-1">
+  <div class="px-4 py-4" style="background-color: #5D4E37;">
+    <h1 class="text-2xl md:text-3xl font-bold text-center" style="color: #F5D67A;">Sightings Map</h1>
+    <p class="text-sm text-center mt-1" style="color: #D4C4B4;">
       <%= number_with_delimiter(Sighting.count) %> wildlife observations
     </p>
   </div>
 
-  <!-- Map Container - Full width -->
+  <!-- Map Container -->
   <div data-controller="map"
        data-map-data-url-value="<%= map_data_sightings_path(format: :json) %>"
        data-map-mode-value="markers"
-       class="flex-1 relative">
+       class="relative"
+       style="flex: 1; min-height: 400px;">
 
-    <div data-map-target="container" class="absolute inset-0"></div>
+    <div data-map-target="container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
 
     <!-- Floating Legend -->
-    <div class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto bg-white/95 backdrop-blur rounded-xl shadow-lg p-3 border border-amber-100 z-[1000]">
+    <div class="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto rounded-xl shadow-lg p-3 z-[1000]" style="background-color: rgba(74, 63, 47, 0.95);">
       <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center md:justify-start">
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #ff7f00;"></span>
-          <span class="text-xs">Lion</span>
+          <span class="text-xs" style="color: #F5D67A;">Lion</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #377eb8;"></span>
-          <span class="text-xs">Elephant</span>
+          <span class="text-xs" style="color: #F5D67A;">Elephant</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #4daf4a;"></span>
-          <span class="text-xs">Giraffe</span>
+          <span class="text-xs" style="color: #F5D67A;">Giraffe</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #f781bf;"></span>
-          <span class="text-xs">Zebra</span>
+          <span class="text-xs" style="color: #F5D67A;">Zebra</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #e41a1c;"></span>
-          <span class="text-xs">Cheetah</span>
+          <span class="text-xs" style="color: #F5D67A;">Cheetah</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #984ea3;"></span>
-          <span class="text-xs">Hippo</span>
+          <span class="text-xs" style="color: #F5D67A;">Hippo</span>
         </div>
         <div class="flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full" style="background-color: #a65628;"></span>
-          <span class="text-xs">Warthog</span>
+          <span class="text-xs" style="color: #F5D67A;">Warthog</span>
         </div>
       </div>
     </div>

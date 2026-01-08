@@ -1,34 +1,63 @@
-<script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-
 <div class="min-h-[calc(100vh-140px)] flex flex-col items-center justify-center px-4">
-  <!-- Lottie Animation -->
-  <div class="w-64 h-64 md:w-80 md:h-80 mb-8">
-    <dotlottie-player
-      src="https://lottie.host/e6ba8cf1-cc54-42c7-a6eb-3c5a87a8c45c/G9FhKGZfFy.lottie"
-      background="transparent"
-      speed="1"
-      loop
-      autoplay
-      style="width: 100%; height: 100%;"
-    ></dotlottie-player>
+  <!-- Animation - Yellow cheetah -->
+  <div class="w-64 h-64 md:w-80 md:h-80 mb-8 flex items-center justify-center">
+    <svg viewBox="0 0 200 150" class="w-full h-full animate-bounce-slow">
+      <!-- Cheetah silhouette in yellow/gold -->
+      <g fill="#F5D67A">
+        <!-- Body -->
+        <ellipse cx="100" cy="90" rx="50" ry="25"/>
+        <!-- Head -->
+        <circle cx="145" cy="75" r="18"/>
+        <!-- Ears -->
+        <ellipse cx="138" cy="60" rx="5" ry="8"/>
+        <ellipse cx="152" cy="60" rx="5" ry="8"/>
+        <!-- Tail -->
+        <path d="M50 90 Q30 70 25 85 Q20 100 35 95" stroke="#F5D67A" stroke-width="6" fill="none"/>
+        <!-- Front legs -->
+        <rect x="120" y="105" width="8" height="30" rx="3"/>
+        <rect x="130" y="105" width="8" height="30" rx="3"/>
+        <!-- Back legs -->
+        <rect x="65" y="105" width="8" height="30" rx="3"/>
+        <rect x="75" y="105" width="8" height="30" rx="3"/>
+        <!-- Spots in darker gold -->
+        <circle cx="85" cy="85" r="4" fill="#C4A54A"/>
+        <circle cx="95" cy="95" r="3" fill="#C4A54A"/>
+        <circle cx="110" cy="88" r="4" fill="#C4A54A"/>
+        <circle cx="75" cy="92" r="3" fill="#C4A54A"/>
+        <circle cx="105" cy="80" r="3" fill="#C4A54A"/>
+        <!-- Eye -->
+        <circle cx="150" cy="72" r="3" fill="#FFF"/>
+        <circle cx="151" cy="72" r="1.5" fill="#3D3225"/>
+        <!-- Nose -->
+        <ellipse cx="160" cy="78" rx="3" ry="2" fill="#C4A54A"/>
+      </g>
+    </svg>
   </div>
 
-  <!-- Welcome Text -->
+  <!-- Welcome Text - Light/cream colored -->
   <div class="text-center max-w-md">
-    <h2 class="text-2xl md:text-3xl font-bold text-amber-800 mb-3">
+    <h2 class="text-2xl md:text-3xl font-bold mb-3" style="color: #F5D67A;">
       Welcome to NowNow
     </h2>
-    <p class="text-gray-600 mb-8">
+    <p class="mb-8" style="color: #E8D5B0;">
       Discover wildlife sightings, explore activity patterns, and plan your perfect safari experience.
     </p>
   </div>
 
-  <!-- Get Started Button -->
+  <!-- Get Started Button - Yellow, bigger with strong shadow -->
   <%= link_to animals_path,
-      class: "inline-flex items-center gap-2 px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105" do %>
-    <span>Get Started</span>
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-    </svg>
+      class: "font-bold text-xl rounded-full transition-all text-center",
+      style: "background-color: #F5D67A; color: #3D3225; box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.3); padding: 18px 60px;" do %>
+    Get Started
   <% end %>
 </div>
+
+<style>
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+</style>

@@ -1,22 +1,18 @@
-<div class="max-w-4xl mx-auto px-4 py-6">
-  <h1 class="text-2xl md:text-3xl font-bold text-center text-amber-800 mb-2">Activity Analysis</h1>
-  <p class="text-gray-600 text-center mb-8 text-sm md:text-base">
-    Select an animal to see when and where it's most active
-  </p>
+<div class="max-w-lg mx-auto px-4 py-6">
+  <h1 class="text-2xl md:text-3xl font-bold text-center mb-6" style="color: #F5D67A;">Activity Analysis</h1>
 
-  <!-- Animal Selection with Photos -->
-  <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+  <!-- Animal Selection - Vertical Cards -->
+  <div class="space-y-3">
     <% @animals.each do |animal| %>
       <%= link_to activity_path(animal_slug: animal.slug),
-          class: "group relative overflow-hidden rounded-xl transition-all hover:scale-105 hover:shadow-lg" do %>
-        <div class="aspect-square">
-          <%= image_tag "animals/#{animal.slug}.jpg",
+          class: "flex items-center gap-4 p-3 rounded-xl transition-all hover:scale-[1.02]",
+          style: "background-color: #6B5D4D;" do %>
+        <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg flex items-center justify-center" style="background-color: #5D4E37;">
+          <%= image_tag "#{animal.slug}-icon.png",
               alt: animal.name,
-              class: "w-full h-full object-cover" %>
+              class: "w-12 h-12 object-contain" %>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end justify-center p-3">
-          <span class="text-white text-sm font-semibold text-center"><%= animal.name %></span>
-        </div>
+        <span class="text-lg font-semibold" style="color: #F5D67A;"><%= animal.name %></span>
       <% end %>
     <% end %>
   </div>

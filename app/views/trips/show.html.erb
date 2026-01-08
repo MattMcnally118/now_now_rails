@@ -1,19 +1,12 @@
 <div class="max-w-lg mx-auto px-4 py-6">
-  <!-- Animal Header -->
-  <div class="text-center mb-6">
-    <div class="inline-block relative">
-      <%= image_tag "animals/#{@trip.animal.slug}.jpg",
-          alt: @trip.animal.name,
-          class: "w-20 h-20 rounded-full object-cover ring-4 ring-amber-500 ring-offset-2" %>
-    </div>
-    <h1 class="text-2xl font-bold text-amber-800 mt-4"><%= @trip.animal.name %> Trip</h1>
-  </div>
+  <!-- Header -->
+  <h1 class="text-2xl font-bold text-center mb-6" style="color: #F5D67A;"><%= @trip.animal.name %> Trip</h1>
 
   <!-- Likelihood Score Card -->
-  <div class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl shadow-lg p-6 mb-6 text-white text-center">
-    <p class="text-amber-100 text-sm mb-1">Likelihood of seeing</p>
-    <p class="text-5xl font-bold mb-2"><%= @trip.likelihood_score %>%</p>
-    <p class="text-amber-100 text-xs">
+  <div class="rounded-2xl shadow-lg p-6 mb-6 text-center" style="background-color: #6B5D4D;">
+    <p class="text-sm mb-1" style="color: #D4C4B4;">Likelihood of seeing</p>
+    <p class="text-5xl font-bold mb-2" style="color: #F5D67A;"><%= @trip.likelihood_score %>%</p>
+    <p class="text-xs" style="color: #A89888;">
       <% if @trip.likelihood_score >= 80 %>
         Excellent viewing conditions expected
       <% elsif @trip.likelihood_score >= 60 %>
@@ -27,29 +20,29 @@
   </div>
 
   <!-- Recommended Location -->
-  <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-amber-100">
-    <h3 class="text-lg font-semibold text-amber-800 mb-4 flex items-center gap-2">
-      <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="rounded-2xl shadow-lg p-6 mb-6" style="background-color: #6B5D4D;">
+    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2" style="color: #F5D67A;">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F5D67A;">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
       Recommended Location
     </h3>
     <% if @trip.recommended_latitude && @trip.recommended_longitude %>
-      <div class="bg-amber-50 rounded-xl p-4 mb-4">
+      <div class="rounded-xl p-4 mb-4" style="background-color: #5D4E37;">
         <div class="flex justify-between text-sm mb-2">
-          <span class="text-gray-600">Coordinates</span>
-          <span class="font-mono text-amber-800"><%= @trip.recommended_latitude.round(4) %>, <%= @trip.recommended_longitude.round(4) %></span>
+          <span style="color: #A89888;">Coordinates</span>
+          <span class="font-mono" style="color: #F5D67A;"><%= @trip.recommended_latitude.round(4) %>, <%= @trip.recommended_longitude.round(4) %></span>
         </div>
         <% if @trip.target_month || @trip.target_hour %>
           <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Best Time</span>
-            <span class="text-amber-800 font-medium">
+            <span style="color: #A89888;">Best Time</span>
+            <span class="font-medium" style="color: #F5D67A;">
               <% if @trip.target_month && @trip.target_hour %>
                 <%= Date::ABBR_MONTHNAMES[@trip.target_month] %> at <%= format('%02d:00', @trip.target_hour) %>
               <% elsif @trip.target_hour %>
                 <%= format('%02d:00', @trip.target_hour) %>
-              <% elsif @trip.target_month %>
+              <% elsif @trip.target_hour %>
                 <%= Date::MONTHNAMES[@trip.target_month] %>
               <% end %>
             </span>
@@ -58,78 +51,23 @@
       </div>
       <a href="https://www.google.com/maps/search/?api=1&query=<%= @trip.recommended_latitude %>,<%= @trip.recommended_longitude %>"
          target="_blank"
-         class="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md transition-all">
+         class="flex items-center justify-center gap-2 w-full py-3 font-semibold rounded-xl shadow-md transition-all"
+         style="background-color: #F5D67A; color: #3D3225;">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
         Open in Google Maps
       </a>
     <% else %>
-      <div class="text-center py-8 text-gray-500">
-        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
+      <div class="text-center py-8" style="color: #A89888;">
         <p>No suitable location found</p>
         <p class="text-sm mt-1">Try expanding your search radius</p>
       </div>
     <% end %>
   </div>
 
-  <!-- Notes (if any) -->
-  <% if @trip.notes.present? %>
-    <div class="bg-amber-50 rounded-2xl p-4 mb-6 border border-amber-100">
-      <ul class="space-y-2 text-sm text-gray-700">
-        <% @trip.notes.each do |note| %>
-          <li class="flex items-start gap-2">
-            <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-            </svg>
-            <span><%= note %></span>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <!-- Your Search (understated, at bottom) -->
-  <details class="bg-gray-50 rounded-xl border border-gray-200 mb-6">
-    <summary class="px-4 py-3 cursor-pointer text-sm text-gray-600 hover:text-gray-800 flex items-center justify-between">
-      <span>Your Search Parameters</span>
-      <svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </summary>
-    <div class="px-4 pb-4 pt-2 text-sm space-y-2 border-t border-gray-200">
-      <div class="flex justify-between">
-        <span class="text-gray-500">From</span>
-        <span class="text-gray-700"><%= @trip.start_latitude.round(4) %>, <%= @trip.start_longitude.round(4) %></span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-gray-500">Radius</span>
-        <span class="text-gray-700"><%= @trip.radius_km %> km</span>
-      </div>
-      <% if @trip.target_month %>
-        <div class="flex justify-between">
-          <span class="text-gray-500">Month</span>
-          <span class="text-gray-700"><%= Date::MONTHNAMES[@trip.target_month] %></span>
-        </div>
-      <% end %>
-      <% if @trip.target_hour %>
-        <div class="flex justify-between">
-          <span class="text-gray-500">Hour</span>
-          <span class="text-gray-700"><%= format('%02d:00', @trip.target_hour) %></span>
-        </div>
-      <% end %>
-    </div>
-  </details>
-
   <!-- Actions -->
-  <div class="flex gap-3">
-    <%= link_to new_trip_path, class: "flex-1 py-3 text-center bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md transition-all" do %>
-      Plan Another Trip
-    <% end %>
-    <%= link_to sightings_path, class: "flex-1 py-3 text-center bg-white hover:bg-gray-50 text-amber-800 font-semibold rounded-xl border border-amber-300 transition-all" do %>
-      View Map
-    <% end %>
-  </div>
+  <%= link_to new_trip_path, class: "block w-full py-3 text-center font-semibold rounded-xl shadow-md transition-all", style: "background-color: #F5D67A; color: #3D3225;" do %>
+    Plan Another Trip
+  <% end %>
 </div>
